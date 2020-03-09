@@ -43,7 +43,7 @@ OFFSET 1000 ROWS FETCH FIRST 100 ROWS ONLY;
 --4
 SELECT
 dm.DeliveryMethodName
-,po.OrderDate
+,po.ExpectedDeliveryDate
 ,s.SupplierName
 ,p.FullName as ContactPerson
 FROM Purchasing.PurchaseOrders po
@@ -56,9 +56,7 @@ po.OrderDate >= '2014-01-01' AND po.OrderDate < '2015-01-01'and
 
 --5
 SELECT TOP 10 
-o.CustomerID
-,c.CustomerName
-,o.SalespersonPersonID
+c.CustomerName
 ,p.FullName as SalespersonPerson
 ,o.OrderDate
 FROM Sales.Orders o
