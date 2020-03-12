@@ -9,7 +9,7 @@ AND NOT EXISTS (SELECT * FROM Sales.Orders s WHERE s.SalespersonPersonID = p.Per
 SELECT
 s.StockItemName
 FROM Warehouse.StockItems s
-WHERE s.UnitPrice <= (SELECT MIN(UnitPrice) FROM Warehouse.StockItems )
+WHERE s.UnitPrice = (SELECT MIN(UnitPrice) FROM Warehouse.StockItems )
 
 SELECT
 s.StockItemName
@@ -164,7 +164,6 @@ ORDER BY TotalSumm DESC
  --cteDeletedDF Выбираются активные файлы на удаление 
  --cteDeletedDFMatchedRules на одну строку накидываются все строки из #companyCustomRules, в EXISTS выбираются соответствующие правилам 
  
-
 
 
 
