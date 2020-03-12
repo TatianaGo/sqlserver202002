@@ -86,7 +86,7 @@ c.DeliveryCityID
 ,ap.FullName
 ,o.PickedByPersonID
 FROM Sales.Orders o
-LEFT JOIN Sales.Customers c ON c.CustomerID = o.CustomerID
+JOIN Sales.Customers c ON c.CustomerID = o.CustomerID
 LEFT JOIN Application.People ap ON ap.PersonID = o.PickedByPersonID
 LEFT JOIN Application.Cities ac ON ac.CityID = c.DeliveryCityID
 WHERE o.OrderID IN (SELECT OrderID FROM cteOL)
@@ -164,7 +164,6 @@ ORDER BY TotalSumm DESC
  --cteDeletedDF Выбираются активные файлы на удаление 
  --cteDeletedDFMatchedRules на одну строку накидываются все строки из #companyCustomRules, в EXISTS выбираются соответствующие правилам 
  
-
 
 
 
