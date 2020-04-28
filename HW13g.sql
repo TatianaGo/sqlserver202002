@@ -1,37 +1,71 @@
 ﻿--1) Написать функцию возвращающую Клиента с наибольшей суммой покупки.
-USE [WideWorldImporters]
-GO
+--USE [WideWorldImporters]
+--GO
 
+
+--SET ANSI_NULLS ON
+--GO
+
+--SET QUOTED_IDENTIFIER ON
+--GO
+
+
+--CREATE FUNCTION [dbo].[fGetCustomerMaxPurchase] ()
+--RETURNS int
+--WITH EXECUTE AS CALLER
+--AS
+
+--BEGIN
+--DECLARE @CustomerID int
+--SELECT @CustomerID = CustomerID
+--FROM
+--	(SELECT TOP 1
+--	i.InvoiceID
+--	,i.CustomerID
+--	,SUM(il.UnitPrice * il.Quantity) as PurchaseAmount
+--FROM Sales.Invoices i
+--INNER JOIN Sales.InvoiceLines il ON il.InvoiceID = i.InvoiceID
+--GROUP BY i.CustomerID,i.InvoiceID
+--ORDER BY PurchaseAmount desc) as tab
+
+--     RETURN @CustomerID
+--END
+--GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 
+alter FUNCTION fSelectCastomerMaxPurchase 
+(	
 
-CREATE FUNCTION [dbo].[fGetCustomerMaxPurchase] ()
-RETURNS int
-WITH EXECUTE AS CALLER
+)
+RETURNS TABLE 
 AS
-
-BEGIN
-DECLARE @CustomerID int
-SELECT @CustomerID = CustomerID
-FROM
-	(SELECT TOP 1
+RETURN 
+(
+WITH tab (InvoiceID,CustomerID,PurchaseAmount) as 
+(SELECT 
 	i.InvoiceID
 	,i.CustomerID
-	,SUM(il.UnitPrice * il.Quantity) as PurchaseAmount
+	,sum(il.UnitPrice * il.Quantity) as PurchaseAmount
 FROM Sales.Invoices i
 INNER JOIN Sales.InvoiceLines il ON il.InvoiceID = i.InvoiceID
-GROUP BY i.CustomerID,i.InvoiceID
-ORDER BY PurchaseAmount desc) as tab
-
-     RETURN @CustomerID
-END
+GROUP BY i.CustomerID,i.InvoiceID)
+SELECT
+	tab.CustomerID
+	,c.CustomerName
+FROM tab
+INNER JOIN Sales.Customers c on c.CustomerID = tab.CustomerID
+where PurchaseAmount = 
+	(SELECT 
+	max(PurchaseAmount)
+	FROM tab)
+)
 GO
 
+select * from fSelectCastomerMaxPurchase()
 
 
 --2) Написать хранимую процедуру с входящим параметром СustomerID, выводящую сумму покупки по этому клиенту.
@@ -51,8 +85,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SELECT 
-		 i.CustomerID
-		,c.CustomerName
+        c.CustomerName
 		,SUM(il.UnitPrice * il.Quantity) as PurchaseAmount
 	FROM Sales.Invoices i
 	INNER JOIN Sales.InvoiceLines il ON il.InvoiceID = i.InvoiceID
